@@ -1,12 +1,16 @@
-function augment_and_save(pliDS, path, iterations)
+function augment_and_save(imgDS, maskDS, path, iterations)
 % Creates and saves augmented copies of training input / masks.
 % Helps increase the amount of training data available.
 %
 % IN
-% pliDS: a PixelLabelImageDatastore, containing both the input images and
-% their corresponding label data. The pixelLabelDatastore must contain all
-% labels for each color index, including for unlabeled pixels. The
-% unlabeled index must be last in the list of labels & IDs used.
+%
+% imgDS: the ImageDatastore for the input images to use. The number of
+% channels in the images does not matter.
+%
+% maskDS: a PixelLabelDatastore containing the labeled data for all images
+% in imgDS. All pixels must have a specific label (including untraced
+% pixels), and the untraced label must have the last (and largest) class
+% ID.
 %
 % path: the string path for where to save the augmented images
 %
@@ -21,8 +25,8 @@ function augment_and_save(pliDS, path, iterations)
         'RandRotation', @getAngle, ...
         'RandScale', [1 1.2]);
     
-    pliDS.DataAugmentation = augmenter;
-    numClasses = pliDS.classNames;
+    pliDS = pixelLabelImageDatastore(imgDS, maskDS, 'DataAugmentation', augmenter);
+    numClasses = size(pliDS.ClassNames, 1);
     
     % make 'iterations' copies of each training patch
     for i = 1:iterations
@@ -42,7 +46,7 @@ function augment_and_save(pliDS, path, iterations)
                 sprintf("%03d", imgNum) + "_in_" + i + ".tif");
             maskName = fullfile(path, ...
                 sprintf("%03d", imgNum) + "_out_" + i + ".tif");
-            save_img(imgName, currImg);
+            save_img(currImg, imgName);
             imwrite(currMask, maskName, 'tiff');
             
             imgNum = imgNum + 1;
