@@ -2,7 +2,7 @@
 % image files. The output (imgs and labels) can then be used to train
 % classification models.
 %
-% Devon Ulrich, 6/11/2020. Last modified 7/1/2020.
+% Devon Ulrich, 6/11/2020. Last modified 7/2/2020.
 
 colorIDs = 0:17;
 colorLabels = ["circ_shell" "sponge_spicule" "renalcid_texture" "oxide"...
@@ -11,9 +11,9 @@ colorLabels = ["circ_shell" "sponge_spicule" "renalcid_texture" "oxide"...
     "peloidal" "stylolite" "calcimicrobe" "homogenous_fill" "unlabeled"];
 
 % Load all images of each type
-pplImgs = fullfile("images", "*_ppl.tif");
-xplImgs = fullfile("images", "*_xpl.tif");
-tracingImgs = fullfile("images", "*_indexed.tif");
+pplImgs = fullfile("../images", "*_ppl.tif");
+xplImgs = fullfile("../images", "*_xpl.tif");
+tracingImgs = fullfile("../images", "*_indexed.tif");
 
 % set up input image datastores
 pplDS = imageDatastore(pplImgs);
@@ -21,31 +21,31 @@ xplDS = imageDatastore(xplImgs);
 inputDS = combine(pplDS, xplDS);
 tracingDS = imageDatastore(tracingImgs);
 
-% get all patches with less than 30% untraced pixels
-[imgs, masks] = load_training_data(inputDS, tracingDS, 0.3, 17);
+% get all 256x256 patches with less than 30% untraced pixels
+[imgs, masks] = load_training_data(inputDS, tracingDS, [256 256], 0.3, 17);
 
 % save the imgs / masks as tiffs in a 'training' folder
-mkdir("training");
+mkdir("../training");
 imgCount = size(imgs,4);
 for i = 1:imgCount
-    imgName = fullfile("training", sprintf("%03d", i) + "_in.tif");
-    maskName = fullfile("training", sprintf("%03d", i) + "_out.tif");
+    imgName = fullfile("../training", sprintf("%03d", i) + "_in.tif");
+    maskName = fullfile("../training", sprintf("%03d", i) + "_out.tif");
     % use custom function for 6-channel image saving
     save_img(imgs(:,:,:,i), imgName);
     imwrite(masks(:,:,:,i), maskName, 'tiff');
 end
 
 %% load the images and save augmented copies of them
-imgPath = fullfile("training", "*_in.tif");
+imgPath = fullfile("../training", "*_in.tif");
 imgDS = imageDatastore(imgPath);
-maskPath = fullfile("training", "*_out.tif");
+maskPath = fullfile("../training", "*_out.tif");
 maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
-augment_and_save(imgDS, maskDS, "training", 3);
+augment_and_save(imgDS, maskDS, "../training", 3);
 
 %% read some files and show them, as a test
-testInDS = imageDatastore("training/*in*.tif");
-testOutDS = pixelLabelDatastore("training/*out*.tif", ...
+testInDS = imageDatastore("../training/*in*.tif");
+testOutDS = pixelLabelDatastore("../training/*out*.tif", ...
     colorLabels(1:end-1), colorIDs(1:end-1)); % don't use untraced categories
 
 numImgs = numpartitions(testInDS);
