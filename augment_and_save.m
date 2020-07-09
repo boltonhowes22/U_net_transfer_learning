@@ -1,4 +1,4 @@
-function augment_and_save(imgDS, maskDS, path, iterations)
+function augment_and_save(imgDS, maskDS, path, iterations, nanID)
 % Creates and saves augmented copies of training input / masks.
 % Helps increase the amount of training data available.
 %
@@ -9,14 +9,17 @@ function augment_and_save(imgDS, maskDS, path, iterations)
 %
 % maskDS: a PixelLabelDatastore containing the labeled data for all images
 % in imgDS. All pixels must have a specific label (including untraced
-% pixels), and the untraced label must have the last (and largest) class
-% ID.
+% pixels).
 %
 % path: the string path for where to save the augmented images
 %
 % iterations: the number of times to copy & save each sample. For example,
 % if iterations = 2, then two extra augmented versions of each image will
 % be generated and saved.
+%
+% nanID: the ID number associated with unlabeled / untraced pixels. When
+% this augmenter creates additional blank sections by rotating & zooming
+% images, it will fill those blank sections with this label.
 %
 % Devon Ulrich, 6/25/2020. Last modified 6/29/2020.
     augmenter = imageDataAugmenter(...
@@ -26,7 +29,6 @@ function augment_and_save(imgDS, maskDS, path, iterations)
         'RandScale', [1 1.2]);
     
     pliDS = pixelLabelImageDatastore(imgDS, maskDS, 'DataAugmentation', augmenter);
-    numClasses = size(pliDS.ClassNames, 1);
     
     % make 'iterations' copies of each training patch
     for i = 1:iterations
@@ -38,7 +40,7 @@ function augment_and_save(imgDS, maskDS, path, iterations)
             currMask = uint8(curr{1,2}{1});
             
             % replace undefined labels (from rotation) with blank label
-            currMask(currMask == 0) = uint8(numClasses);
+            currMask(currMask == 0) = uint8(nanID + 1);
             currMask = currMask - 1; % change from 1-indexed to 0-indexed
             
             % save augmented images in training folder, as ###_in/out_#.tif

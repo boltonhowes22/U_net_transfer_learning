@@ -41,12 +41,13 @@ imgDS = imageDatastore(imgPath);
 maskPath = fullfile("../training", "*_out.tif");
 maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
-augment_and_save(imgDS, maskDS, "../training", 3);
+% make 3 augmented copies of each original patch
+augment_and_save(imgDS, maskDS, "../training", 3, 17);
 
 %% read some files and show them, as a test
 testInDS = imageDatastore("../training/*in*.tif");
 testOutDS = pixelLabelDatastore("../training/*out*.tif", ...
-    colorLabels(1:end-1), colorIDs(1:end-1)); % don't use untraced categories
+    colorLabels(1:end-1), colorIDs(1:end-1)); % don't use the untraced category
 
 numImgs = numpartitions(testInDS);
 
