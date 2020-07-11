@@ -1,4 +1,4 @@
-function [training_ds, validation_ds] = training_master(colorIDs, colorLabels, pplImgs, xplImgs, tracingImgs)
+function [training_ds, validation_ds] = training_master(colorIDs, colorLabels, pplImgs, xplImgs, tracingImgs, nanID)
 % This function is a wrapper that combines several functions and scripts to
 % build an augmented training dataset for a 6 channel neural network. 
 %% Inputs
@@ -33,7 +33,9 @@ inputDS = combine(pplDS, xplDS); % combines into 6 channel image
 tracingDS = imageDatastore(tracingImgs);
 
 % get all patches with less than 30% untraced pixels
-[imgs, masks] = load_training_data(inputDS, tracingDS, 0.3, 4);
+patch_size = [256 256];
+max_undefined = .3;
+[imgs, masks] = load_training_data(inputDS, tracingDS,patch_size, max_undefined, nanID);
 
 % save the imgs / masks as tiffs in a 'training' folder
 mkdir("training");
@@ -52,7 +54,7 @@ imgDS = imageDatastore(imgPath);
 maskPath = fullfile("training", "*_out.tif");
 maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
-augment_and_save(imgDS, maskDS, "training", 3);
+augment_and_save(imgDS, maskDS, "training", 3, nanID);
 
 %% read some files and show them, as a test
 testInDS = imageDatastore("training/*in*.tif");
