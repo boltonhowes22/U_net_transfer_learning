@@ -1,11 +1,12 @@
 % Full Segmenting Script
 colorIDs = 0:4;
 colorLabels = ["out_of_focus" "giant_ooids" "matrix" "fragments" "unlabeled"];
+nanID = 4;
 pplImgs = fullfile("images", "*_scale.tif");
 xplImgs = fullfile("images", "*_scale.tif");
 tracingImgs = fullfile("images", "*_training.tif");
 
-[training_ds, validation_ds] = training_master(colorIDs, colorLabels, pplImgs, xplImgs, tracingImgs);
+[training_ds, validation_ds] = training_master(colorIDs, colorLabels, pplImgs, xplImgs, tracingImgs, nanID);
 
 
 %%
@@ -13,7 +14,7 @@ ld = load("multispectralUnet.mat");
 pretrained_net = ld.net;
 last_fixed_layer = 21;
 new_learnrate_factor = 10;
-dice_loss = 0;
+dice_loss = 1;
 class_list = colorLabels;
 n_classes = length(class_list);
 [ready_net] = transfer_ready(pretrained_net, last_fixed_layer, n_classes, class_list, new_learnrate_factor, dice_loss);
