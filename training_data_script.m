@@ -22,24 +22,8 @@ inputDS = combine(pplDS, xplDS);
 tracingDS = imageDatastore(tracingImgs);
 
 % get all 256x256 patches with less than 30% untraced pixels
-[imgs, masks] = load_training_data(inputDS, tracingDS, [256 256], 0.3, 17);
-
-% reduce classes!
-reduceMap = [0 0 1 2 3 0 0 4 0 0 1 5 4 3 2 6 3 6];
-masks = uint8(reduceMap(masks+1));
-colorIDs = 0:6;
-colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "gray" "unlabeled"];
-
-% save the imgs / masks as tiffs in a 'training' folder
 mkdir("../training");
-imgCount = size(imgs,4);
-for i = 1:imgCount
-    imgName = fullfile("../training", sprintf("%03d", i) + "_in.tif");
-    maskName = fullfile("../training", sprintf("%03d", i) + "_out.tif");
-    % use custom function for 6-channel image saving
-    save_img(imgs(:,:,:,i), imgName);
-    imwrite(masks(:,:,:,i), maskName, 'tiff');
-end
+load_training_data(inputDS, tracingDS, "../training", [256 256], 0.3, 17);
 
 %% load the images and save augmented copies of them
 imgPath = fullfile("../training", "*_in.tif");
