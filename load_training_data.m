@@ -2,6 +2,8 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
 % This function accepts large input images and their corresponding
 % partially-traced masks, and splits them into patches of almost
 % entirely traced inputs and outputs to use as training data for the u-net.
+% It then saves the images in the format "###_in/out.tif" in the specified
+% directory.
 %
 % IN
 % inputDS: the datastore for all color input images. Can be either an
@@ -12,6 +14,8 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
 % tracingDS: imageDatastore for all indexed-color tracing images. Note:
 % inputDS and tracingDS must contain images from the same samples in the
 % same exact order.
+%
+% outputFolder: where to save the output images
 %
 % patchSize: a 2-element vector describing the desired [rows, columns] of
 % all output patches
