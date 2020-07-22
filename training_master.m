@@ -32,21 +32,12 @@ xplDS = imageDatastore(xplImgs);
 inputDS = combine(pplDS, xplDS); % combines into 6 channel image
 tracingDS = imageDatastore(tracingImgs);
 
+mkdir("training");
+
 % get all patches with less than 30% untraced pixels
 patch_size = [256 256];
 max_undefined = .3;
-[imgs, masks] = load_training_data(inputDS, tracingDS,patch_size, max_undefined, nanID);
-
-% save the imgs / masks as tiffs in a 'training' folder
-mkdir("training");
-imgCount = size(imgs,4);
-for i = 1:imgCount
-    imgName = fullfile("training", sprintf("%03d", i) + "_in.tif");
-    maskName = fullfile("training", sprintf("%03d", i) + "_out.tif");
-    % use custom function for 6-channel image saving
-    save_img(imgs(:,:,:,i), imgName);
-    imwrite(masks(:,:,:,i), maskName, 'tiff');
-end
+load_training_data(inputDS, tracingDS, "training",patch_size, max_undefined, nanID);
 
 %% load the images and save augmented copies of them
 imgPath = fullfile("training", "*_in.tif");
