@@ -39,7 +39,6 @@ function [imgs, labels] = load_training_data(inputDS, tracingDS, patchSize, maxU
     reset(inputDS);
     reset(tracingDS);
     
-    numImgs = numpartitions(inputDS);
     if class(inputDS) == "matlab.io.datastore.CombinedDatastore"
         numChannels = 3 * size(inputDS.UnderlyingDatastores, 2);
     elseif class(inputDS) == "matlab.io.datastore.ImageDatastore"
@@ -52,7 +51,7 @@ function [imgs, labels] = load_training_data(inputDS, tracingDS, patchSize, maxU
     imgs(patchSize(1), patchSize(2), numChannels, 128) = uint16(0);
     labels(patchSize(1), patchSize(2), 1, 128) = uint8(0);
     currIndex = 1;
-    for img = 1:numImgs
+    while hasdata(inputDS)
         % load all the data for this sample
         currImg = read(inputDS);
         if ~isa(currImg, 'cell')
