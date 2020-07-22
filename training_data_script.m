@@ -24,6 +24,12 @@ tracingDS = imageDatastore(tracingImgs);
 % get all 256x256 patches with less than 30% untraced pixels
 [imgs, masks] = load_training_data(inputDS, tracingDS, [256 256], 0.3, 17);
 
+% reduce classes!
+reduceMap = [0 0 1 2 3 0 0 4 0 0 1 3 4 3 2 1 3 5];
+masks = uint8(reduceMap(masks+1));
+colorIDs = 0:5;
+colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "unlabeled"];
+
 % save the imgs / masks as tiffs in a 'training' folder
 mkdir("../training");
 imgCount = size(imgs,4);
@@ -43,18 +49,3 @@ maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
 % make 3 augmented copies of each original patch
 augment_and_save(imgDS, maskDS, "../training", 3, 17);
-
-%% read some files and show them, as a test
-testInDS = imageDatastore("../training/*in*.tif");
-testOutDS = pixelLabelDatastore("../training/*out*.tif", ...
-    colorLabels(1:end-1), colorIDs(1:end-1)); % don't use the untraced category
-
-numImgs = numpartitions(testInDS);
-
-for i = 1:numImgs
-    baseImg = read(testInDS);
-    maskImg = read(testOutDS);
-    
-    res{i} = labeloverlay(baseImg(:,:,1:3), maskImg{1});
-end
-montage(res, "Size", [10 10]);
