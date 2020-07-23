@@ -25,10 +25,10 @@ tracingDS = imageDatastore(tracingImgs);
 [imgs, masks] = load_training_data(inputDS, tracingDS, [256 256], 0.3, 17);
 
 % reduce classes!
-reduceMap = [0 0 1 2 3 0 0 4 0 0 1 3 4 3 2 1 3 5];
+reduceMap = [0 0 1 2 3 0 0 4 0 0 1 5 4 3 2 6 3 6];
 masks = uint8(reduceMap(masks+1));
-colorIDs = 0:5;
-colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "unlabeled"];
+colorIDs = 0:6;
+colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "gray" "unlabeled"];
 
 % save the imgs / masks as tiffs in a 'training' folder
 mkdir("../training");
