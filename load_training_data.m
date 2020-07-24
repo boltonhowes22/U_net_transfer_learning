@@ -1,4 +1,4 @@
-function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUndef, nanID)
+function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUndef, nanID, reduceMap)
 % This function accepts large input images and their corresponding
 % partially-traced masks, and splits them into patches of almost
 % entirely traced inputs and outputs to use as training data for the u-net.
@@ -64,6 +64,11 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
                     for ch = 1:(numChannels / 3)
                         currChannels = (ch-1)*3 + 1 : ch*3; % = 1:3, 4:6, etc
                         imgs(:,:,currChannels) = currImg{ch}(currRows, currCols, :);
+                    end
+                    
+                    % reduce classes, if reduceMap exists
+                    if exist('reduceMap', 'var') == 1
+                        currPatch = uint8(reduceMap(currPatch+1));
                     end
                     
                     % save the image and label
