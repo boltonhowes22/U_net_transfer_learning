@@ -1,4 +1,5 @@
-function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUndef, nanID, reduceMap)
+function load_training_data(inputDS, tracingDS, outputFolder,...
+    patchSize, strideSize, maxUndef, nanID, reduceMap)
 % This function accepts large input images and their corresponding
 % partially-traced masks, and splits them into patches of almost
 % entirely traced inputs and outputs to use as training data for the u-net.
@@ -49,9 +50,9 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
         imgLabels = read(tracingDS);
         
         % iterate through each patch rectangle in the image
-        for row = 1:patchSize(1):(size(currImg{1}, 1) - patchSize(1))
+        for row = 1:strideSize(1):(size(currImg{1}, 1) - patchSize(1))
             currRows = row:(row+patchSize(1)-1);
-            for col = 1:patchSize(2):(size(currImg{1}, 2) - patchSize(2))
+            for col = 1:strideSize(2):(size(currImg{1}, 2) - patchSize(2))
                 currCols = col:(col+patchSize(2)-1);
                 currPatch = imgLabels(currRows, currCols);
                 

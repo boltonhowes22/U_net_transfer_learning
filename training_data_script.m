@@ -24,7 +24,8 @@ tracingDS = imageDatastore(tracingImgs);
 % get all 256x256 patches with less than 30% untraced pixels
 mkdir("../training");
 reduceMap = [0 0 1 2 3 0 0 4 0 0 1 5 4 3 2 6 3 6];
-load_training_data(inputDS, tracingDS, "../training", [256 256], 0.3, 17, reduceMap);
+load_training_data(inputDS, tracingDS, "../training",...
+    [256 256], [64 64], 0.2, 17, reduceMap);
 colorIDs = 0:6;
 colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "gray" "unlabeled"];
 
