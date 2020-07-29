@@ -9,4 +9,4 @@
 module purge
 module load matlab/R2019b
 
-matlab -singleCompThread -nodisplay -nosplash -r training_data_script
+matlab -batch training_data_script

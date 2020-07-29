@@ -22,18 +22,18 @@ inputDS = combine(pplDS, xplDS);
 tracingDS = imageDatastore(tracingImgs);
 
 % get all 256x256 patches with less than 30% untraced pixels
-mkdir("../training");
+mkdir("/scratch/network/dulrich/training");
 reduceMap = [0 0 6 2 3 0 0 4 0 0 1 5 4 3 2 1 3 7];
-load_training_data(inputDS, tracingDS, "../training",...
+load_training_data(inputDS, tracingDS, "/scratch/network/dulrich/training",...
     [256 256], [64 64], 0.2, 17, reduceMap);
 colorIDs = 0:7;
 colorLabels = ["calcite" "clay" "oxide" "fill" "not_rock" "gray" "renalcid" "unlabeled"];
 
 %% load the images and save augmented copies of them
-imgPath = fullfile("../training", "*_in.tif");
+imgPath = fullfile("/scratch/network/dulrich/training", "*_in.tif");
 imgDS = imageDatastore(imgPath);
-maskPath = fullfile("../training", "*_out.tif");
+maskPath = fullfile("/scratch/network/dulrich/training", "*_out.tif");
 maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
 % make 3 augmented copies of each original patch
-augment_and_save(imgDS, maskDS, "../training", 3, 17);
+augment_and_save(imgDS, maskDS, "/scratch/network/dulrich/training", 3, 17);
