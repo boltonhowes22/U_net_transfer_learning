@@ -1,7 +1,9 @@
-load('results/03-Aug-2020-12-51-53.mat');
+load('results/06-Aug-2020-22-29-44.mat');
 
 pplDS = imageDatastore("../images/*_ppl.tif");
 xplDS = imageDatastore("../images/*_xpl.tif");
+
+mkdir("/scratch/network/dulrich/segmented");
 
 imCount = 1
 while hasdata(pplDS)
