@@ -1,12 +1,23 @@
-load('nets/trainedCNN.mat');
+% Script for using our trained U-net to segment all images in a directory.
+%
+% Devon Ulrich, 8/6/2020. Last modified 9/8/2020.
 
-pplDS = imageDatastore("/scratch/network/dulrich/images/*_ppl.tif");
-xplDS = imageDatastore("/scratch/network/dulrich/images/*_xpl.tif");
+% NOTE: be sure to replace these strings if you're running this script!
+IMGS_DIR = "/scratch/network/dulrich/images";
+NETS_DIR = "./nets";
+SEGMENTED_DIR = "/scratch/network/dulrich/segmented";
 
-mkdir("/scratch/network/dulrich/segmented");
+% load the net and images
+load(fullfile(NETS_DIR, "trainedCNN.mat"));
 
-imCount = 1
+pplDS = imageDatastore(fullfile(IMGS_DIR, "*_ppl.tif"));
+xplDS = imageDatastore(fullfile(IMGS_DIR, "*_xpl.tif"));
+
+mkdir(SEGMENTED_DIR);
+
+imCount = 0;
 while hasdata(pplDS)
+    imCount = imCount + 1
     img = read(pplDS);
     img(:,:,4:6) = read(xplDS);
 
@@ -27,6 +38,6 @@ while hasdata(pplDS)
         end
     end
 
-    save("/scratch/network/dulrich/segmented/" + sprintf("%02d", imCount) + "_out.mat", 'output', 'imgscores');
-    imCount = imCount + 1
+    save(fullfile(SEGMENTED_DIR, sprintf("%02d", imCount) + "_out.mat"),...
+        'output', 'imgscores');
 end
