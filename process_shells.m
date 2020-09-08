@@ -21,6 +21,13 @@ for i = 1:size(files, 1)
         j = j + 1;
     end
     
+    % remove biggest components (including them can create memory problems)
+    j = CC.NumObjects;
+    while numel(CC.PixelIdxList{idxs(j)}) > 50000
+        processed(CC.PixelIdxList{idxs(j)}) = 0;
+        j = j - 1;
+    end
+    
     CC = bwconncomp(processed);
     stats = regionprops('table', CC, 'all');
     
@@ -30,5 +37,5 @@ for i = 1:size(files, 1)
         processed(CC.PixelIdxList{idx}) = yfit(idx);
     end
     
-    imwrite(processed, "../shells/" + i + ".tif");
+    imwrite(processed, "../shells/" + sprintf("%02d", i) + ".tif");
 end

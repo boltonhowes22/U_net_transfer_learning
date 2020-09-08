@@ -27,6 +27,6 @@ while hasdata(pplDS)
         end
     end
 
-    save("/scratch/network/dulrich/segmented/" + imCount + "_out.mat", 'output', 'imgscores');
+    save("/scratch/network/dulrich/segmented/" + sprintf("%02d", imCount) + "_out.mat", 'output', 'imgscores');
     imCount = imCount + 1
 end
