@@ -1,7 +1,7 @@
 load('svm.mat');
 
-mkdir('../shells');
-files = dir('../segmented/*.mat');
+mkdir('../../shells');
+files = dir('../../segmented/*.mat');
 for i = 1:size(files, 1)
     % load each segmented .mat file
     currdir = fullfile(files(i).folder, files(i).name)
@@ -37,5 +37,5 @@ for i = 1:size(files, 1)
         processed(CC.PixelIdxList{idx}) = yfit(idx);
     end
     
-    imwrite(processed, "../shells/" + sprintf("%02d", i) + ".tif");
+    imwrite(processed, "../../shells/" + sprintf("%02d", i) + ".tif");
 end
