@@ -25,7 +25,7 @@ function augment_and_save(imgDS, maskDS, path, iterations, nanID)
     augmenter = imageDataAugmenter(...
         'RandXReflection', 1, ...
         'RandYReflection', 1, ...
-        'RandRotation', @getAngle, ...
+        'RandRotation', @get_angle, ...
         'RandScale', [1 1.2]);
     
     pliDS = pixelLabelImageDatastore(imgDS, maskDS, 'DataAugmentation', augmenter);
@@ -54,14 +54,4 @@ function augment_and_save(imgDS, maskDS, path, iterations, nanID)
             imgNum = imgNum + 1;
         end
     end
-end
-
-function angle = getAngle()
-% custom function for selecting a random rotation angle. Currently rotates
-% images 90, 180, 270, or 360 degrees, with a +/- 20 degree offset. This
-% creates a lot of rotation possibilities while still minimizing the amount
-% of unlabeled pixels in the augmented images.
-    big = randi(4);
-    small = randi([-20 20]);
-    angle = big * 90 + small;
 end
