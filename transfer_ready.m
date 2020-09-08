@@ -24,6 +24,8 @@ function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer, n_cla
 % dice_loss: logical flag to replace the pixel classification layer to one
 % using the dice loss function. 1 for dice loss, 0 for crossentropy.
 %
+% classWeights: predefined class weights to use if dice_loss == 0
+%
 % OUT
 % ready_lgraph: Layer graph of a network with the original architecture and
 % fixed weights up to the desired depth. The rest of the layers are

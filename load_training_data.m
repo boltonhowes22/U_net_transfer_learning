@@ -14,8 +14,13 @@ function load_training_data(inputDS, tracingDS, outputFolder,...
 % inputDS and tracingDS must contain images from the same samples in the
 % same exact order.
 %
+% outputFolder: the string of a folder to save all patches
+%
 % patchSize: a 2-element vector describing the desired [rows, columns] of
 % all output patches
+%
+% strideSize: a 2-element vector describing the spacing between adjacent
+% patches for testing & extracting (in [rows, columns] format)
 %
 % maxUndef: the maximum fraction of untraced pixels for each output patch.
 % maxUndef should be between 0 and 1. Ex: 0.2 means that at most 20% of
@@ -23,8 +28,12 @@ function load_training_data(inputDS, tracingDS, outputFolder,...
 % 
 % nanID: the integer label for unlabeled pixels in the training image
 % masks.
+%
+% reduceMap: a vector of new IDs for each input label, used for combining
+% multiple distinct categories into one group. See training_data_script.m
+% for an example.
 % 
-% Devon Ulrich, 6/11/2020. Last modified 7/2/2020.
+% Devon Ulrich, 6/11/2020. Last modified 9/8/2020.
     % reset all datastores
     reset(inputDS);
     reset(tracingDS);

@@ -15,12 +15,15 @@ xplDS = imageDatastore(fullfile(IMGS_DIR, "*_xpl.tif"));
 
 mkdir(SEGMENTED_DIR);
 
+% for each image, segment all patches & stitch them together
 imCount = 0;
 while hasdata(pplDS)
     imCount = imCount + 1
     img = read(pplDS);
     img(:,:,4:6) = read(xplDS);
 
+    % keep track of both the predicted output categories & their confidence
+    % scores
     output = uint8(zeros(size(img,1),size(img,2)));
     imgscores = zeros(size(img,1),size(img,2));
 
