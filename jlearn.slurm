@@ -10,4 +10,4 @@
 module purge
 module load matlab/R2019b
 
-matlab -batch aug_learn_script
+matlab -batch learn_script

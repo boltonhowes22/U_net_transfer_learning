@@ -18,7 +18,7 @@ val_label_ds = pixelLabelDatastore("/scratch/network/dulrich/training/*_out_1.ti
 val_ds = pixelLabelImageDatastore(val_im_ds, val_label_ds);
 
 % load the network & prep it for transfer learning
-ld = load("multispectralUnet.mat");
+ld = load("nets/multispectralUnet.mat");
 pretrained_net = ld.net;
 last_fixed_layer = 21;
 new_learnrate_factor = 10;
@@ -58,7 +58,7 @@ metrics = evaluateSemanticSegmentation(results_ds, val_label_ds)
 date = datestr(now);
 date = strrep(date, ' ', '-');
 date = strrep(date, ':', '-');
-save("results/" + date + ".mat", "cnn_net", "training_info", "metrics");
+save("nets/" + date + ".mat", "cnn_net", "training_info", "metrics");
 date
 
 function angle = getAngle()

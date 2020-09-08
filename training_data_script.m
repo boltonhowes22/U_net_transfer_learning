@@ -35,5 +35,5 @@ imgDS = imageDatastore(imgPath);
 maskPath = fullfile("/scratch/network/dulrich/training", "*_out.tif");
 maskDS = pixelLabelDatastore(maskPath, colorLabels, colorIDs);
 
-% make 3 augmented copies of each original patch
-augment_and_save(imgDS, maskDS, "/scratch/network/dulrich/training", 3, 7);
+% make 1 augmented copy of each original patch
+augment_and_save(imgDS, maskDS, "/scratch/network/dulrich/training", 1, 7);

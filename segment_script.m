@@ -1,4 +1,4 @@
-load('results/06-Aug-2020-22-29-44.mat');
+load('nets/trainedCNN.mat');
 
 pplDS = imageDatastore("/scratch/network/dulrich/images/*_ppl.tif");
 xplDS = imageDatastore("/scratch/network/dulrich/images/*_xpl.tif");

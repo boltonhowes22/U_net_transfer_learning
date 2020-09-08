@@ -1,4 +1,7 @@
+# misc editor / slurm files
 *.swp
 *.out
 *.asv
 
+# ignore the large files in nets/, which should be downloaded or created manually
+nets/

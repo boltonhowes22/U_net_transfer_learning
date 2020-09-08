@@ -10,4 +10,4 @@
 module purge
 module load matlab/R2019b
 
-matlab -batch segment_img
+matlab -batch segment_script
