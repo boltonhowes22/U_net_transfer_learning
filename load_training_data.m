@@ -1,4 +1,5 @@
-function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUndef, nanID)
+function load_training_data(inputDS, tracingDS, outputFolder,...
+    patchSize, strideSize, maxUndef, nanID, reduceMap)
 % This function accepts large input images and their corresponding
 % partially-traced masks, and splits them into patches of almost
 % entirely traced inputs and outputs to use as training data for the u-net.
@@ -20,19 +21,25 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
 % patchSize: a 2-element vector describing the desired [rows, columns] of
 % all output patches
 %
+% strideSize: a 2-element vector describing the spacing between adjacent
+% patches for testing & extracting (in [rows, columns] format)
+%
 % maxUndef: the maximum fraction of untraced pixels for each output patch.
 % maxUndef should be between 0 and 1. Ex: 0.2 means that at most 20% of
 % each patch should be untraced.
 % 
 % nanID: the integer label for unlabeled pixels in the training image
 % masks.
+%
+% reduceMap: a vector of new IDs for each input label, used for combining
+% multiple distinct categories into one group. See training_data_script.m
+% for an example.
 % 
-% Devon Ulrich, 6/11/2020. Last modified 7/2/2020.
+% Devon Ulrich, 6/11/2020. Last modified 9/8/2020.
     % reset all datastores
     reset(inputDS);
     reset(tracingDS);
     
-    numImgs = numpartitions(inputDS);
     if class(inputDS) == "matlab.io.datastore.CombinedDatastore"
         numChannels = 3 * size(inputDS.UnderlyingDatastores, 2);
     elseif class(inputDS) == "matlab.io.datastore.ImageDatastore"
@@ -43,7 +50,7 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
     
     imgs(patchSize(1),patchSize(2),numChannels) = uint16(0);
     currIndex = 1;
-    for img = 1:numImgs
+    while hasdata(inputDS)
         % load all the data for this sample
         currImg = read(inputDS);
         if ~isa(currImg, 'cell')
@@ -54,9 +61,9 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
         imgLabels = read(tracingDS);
         
         % iterate through each patch rectangle in the image
-        for row = 1:patchSize(1):(size(currImg{1}, 1) - patchSize(1))
+        for row = 1:strideSize(1):(size(currImg{1}, 1) - patchSize(1))
             currRows = row:(row+patchSize(1)-1);
-            for col = 1:patchSize(2):(size(currImg{1}, 2) - patchSize(2))
+            for col = 1:strideSize(2):(size(currImg{1}, 2) - patchSize(2))
                 currCols = col:(col+patchSize(2)-1);
                 currPatch = imgLabels(currRows, currCols);
                 
@@ -69,6 +76,11 @@ function load_training_data(inputDS, tracingDS, outputFolder, patchSize, maxUnde
                     for ch = 1:(numChannels / 3)
                         currChannels = (ch-1)*3 + 1 : ch*3; % = 1:3, 4:6, etc
                         imgs(:,:,currChannels) = currImg{ch}(currRows, currCols, :);
+                    end
+                    
+                    % reduce classes, if reduceMap exists
+                    if exist('reduceMap', 'var') == 1
+                        currPatch = uint8(reduceMap(currPatch+1));
                     end
                     
                     % save the image and label

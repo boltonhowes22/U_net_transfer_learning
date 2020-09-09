@@ -1,4 +1,5 @@
-function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer, n_classes, class_list, new_learnrate_factor, dice_loss)
+function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer,...
+    n_classes, class_list, new_learnrate_factor, dice_loss, classWeights)
 % This function takes a downloaded, pretrained DAGNetwork and prepares it
 % for transfer learning by fixing the weights of layers to a desired depth
 % and replacing learnable layers past that depth
@@ -23,6 +24,8 @@ function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer, n_cla
 %
 % dice_loss: logical flag to replace the pixel classification layer to one
 % using the dice loss function. 1 for dice loss, 0 for crossentropy.
+%
+% classWeights: predefined class weights to use if dice_loss == 0
 %
 % OUT
 % ready_lgraph: Layer graph of a network with the original architecture and
@@ -99,7 +102,7 @@ function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer, n_cla
     if dice_loss
         new_classification = dicePixelClassificationLayer('Name',layers(end,1).Name,'Classes',class_list);
     else
-        new_classification = pixelClassificationLayer('Name',layers(end,1).Name,'Classes',class_list);
+        new_classification = pixelClassificationLayer('Name',layers(end,1).Name,'Classes',class_list, 'ClassWeights', classWeights);
     end
     lgraph = replaceLayer(lgraph, layers(end,1).Name, new_classification);
 

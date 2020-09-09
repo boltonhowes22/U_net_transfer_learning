@@ -2,6 +2,9 @@
 % for a large thin-section image. Saves the training data as an
 % indexed-color image which can then be opened in Photoshop or fed into a
 % neural network as training data.
+%
+% Devon Ulrich, 7/15/2020
+
 %% load a specific image & all the required classifying data
 im = imread("../../images/unused/RLG_80 _ppl.tif");
 
