@@ -1,4 +1,8 @@
 function [] = cursor_callback(source, ~, label, mask)
+% Handles mouse clicks for highlighting / unhighlighting superpixels for
+% a specific class.
+%
+% Devon Ulrich, 7/15/2020
     global global_collector;
     label_size = size(label);
     % Okay, now grab the screen coordinates

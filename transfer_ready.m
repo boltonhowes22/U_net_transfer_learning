@@ -1,4 +1,5 @@
-function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer, n_classes, class_list, new_learnrate_factor, dice_loss, classWeights)
+function [ready_lgraph] = transfer_ready(pretrained_net, last_fixed_layer,...
+    n_classes, class_list, new_learnrate_factor, dice_loss, classWeights)
 % This function takes a downloaded, pretrained DAGNetwork and prepares it
 % for transfer learning by fixing the weights of layers to a desired depth
 % and replacing learnable layers past that depth
